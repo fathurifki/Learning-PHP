@@ -1,0 +1,25 @@
+version: "3.9"
+services:
+  app:
+    build: .
+    container_name: php-docker-starter
+    ports:
+      - "8080:80"
+    volumes:
+      - ./src:/var/www/html
+    restart: unless-stopped
+
+  browsersync:
+    image: node:20-alpine
+    container_name: php-docker-starter-browsersync
+    working_dir: /var/www/html
+    depends_on:
+      - app
+    volumes:
+      - ./src:/var/www/html
+    command: >
+      sh -lc "npx --yes browser-sync@2.29.3 start --proxy http://app:80 --files '/var/www/html/**/*' --no-open --port 3000 --ui-port 3001 --logLevel info"
+    ports:
+      - "3000:3000"
+      - "3001:3001"
+    restart: unless-stopped
